@@ -1,0 +1,65 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USTA Tennis Players</title>
+    <style>
+        /* Add your styles here */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<script>
+    const SUPABASE_URL = 'https://cwxiwnmehnidavolxsin.supabase.co'; // Replace with your Supabase Project URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3eGl3bm1laG5pZGF2b2x4c2luIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU2OTY3OTgsImV4cCI6MjA1MTI3Mjc5OH0.IyIyyKn54P7aMYB_Zjn_II9ZO_GhwbTwIf4nW4hcVTQ'; // Replace with your API Key
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+
+<script>
+    async function fetchPlayers() {
+        const { data, error } = await supabase.from('players').select('*');
+        if (error) {
+            console.error('Error fetching players:', error);
+            return;
+        }
+
+        const tableBody = document.getElementById('playersTableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        data.forEach(player => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${player.first_name}</td>
+                <td>${player.last_name}</td>
+                <td>${player.phone_number}</td>
+                <td>${player.usta_rating}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    fetchPlayers(); // Call this function when the page loads
+</script>
+
+<script>
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const ustaRating = parseFloat(document.getElementById('ustaRating').value);
+
+        const { data, error } = await supabase.from('players').insert([
+            { first_name: firstName, last_name: lastName, phone_number: phoneNumber, usta_rating: ustaRating }
+        ]);
+
+        if (error) {
+            console.error('Error saving player:', error);
+        } else {
+            console.log('Player saved:', data);
+            fetchPlayers(); // Refresh the table
+        }
+
+        form.reset();
+    });
+</script>
